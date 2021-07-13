@@ -1,7 +1,6 @@
 package com.tsvyk.kafkademo.controllers;
 
 import com.tsvyk.kafkademo.services.ProducerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,13 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class KafkaController {
 
-    @Autowired
-    private ProducerService producerService;
+    private final ProducerService producerService;
+
+    public KafkaController(ProducerService producerService) {
+        this.producerService = producerService;
+    }
 
     @PostMapping("/publish")
     public void sendMessage(@RequestParam("message") String message) {
 
-        producerService.produce(message);
+        this.producerService.produce(message);
 
     }
 }
