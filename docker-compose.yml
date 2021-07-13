@@ -1,4 +1,4 @@
-version: '3.7'
+version: '2'
 
 services:
   zookeeper:
@@ -6,8 +6,6 @@ services:
     ports:
       - 2181:2181
     container_name: zookeeper
-    networks:
-      - my_network
 
 
   kafka:
@@ -15,32 +13,27 @@ services:
     container_name: kafka
     ports:
       - 9092:9092
+    hostname: kafka
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
       KAFKA_CREATE_TOPIC: "my_topic:1:3"
     depends_on:
       - zookeeper
-    networks:
-      - my_network
 
   app:
     image: 'kafka-demo:latest'
+    container_name: app
     ports:
-      - 8080:8080
+      - 8081:8081
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - /data/kafka-demo
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
       - kafka
       - zookeeper
     links:
-        - kafka:kafka
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
+        - kafka
