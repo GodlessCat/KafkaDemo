@@ -14,7 +14,6 @@ public class ConsumerService {
     @KafkaListener(topics="my_topic", groupId="my_group_id")
     public void consume(String message){
 
-
         logger.info(String.format("#### -> Consumed message -> %s", message));
     }
 }
